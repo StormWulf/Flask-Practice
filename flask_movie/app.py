@@ -1,9 +1,16 @@
-from flask import Flask
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask_sqlalchemy import SQLAlchemy
 from passwords import POSTGRES_PASSWORD
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:{POSTGRES_PASSWORD}@localhost/flask_movie'
+app.debug = True
 db = SQLAlchemy(app)
 
 
@@ -22,7 +29,15 @@ class User(db.Model):
 
 @app.route("/")
 def index():
-    return "<h1 style='color: red'>Hello Flask</h1>"
+    return render_template("add_user.html")
+
+
+@app.route("/post_user", methods=["POST"])
+def post_user():
+    user = User(request.form['username'], request.form['email'])
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
