@@ -29,7 +29,9 @@ class User(db.Model):
 
 @app.route("/")
 def index():
-    return render_template("add_user.html")
+    users = User.query.all()
+    one_item = User.query.filter_by(username="foo").first()
+    return render_template("add_user.html", users=users, one_item=one_item)
 
 
 @app.route("/post_user", methods=["POST"])
